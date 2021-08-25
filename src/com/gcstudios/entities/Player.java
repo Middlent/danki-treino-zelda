@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 
 import com.gcstudios.graphics.Camera;
 import com.gcstudios.graphics.Entity;
+import com.gcstudios.graphics.World;
 import com.gcstudios.main.Game;
 
 public class Player extends Entity{
@@ -81,8 +82,8 @@ public class Player extends Entity{
 			index = 0;
 		}
 		
-		Camera.x = this.getX() - (Game.WIDTH/2);
-		Camera.y = this.getY() - (Game.HEIGHT/2);
+		Camera.x = Camera.clamp(this.getX() - (Game.WIDTH/2), 0, World.WIDTH * 16 - Game.WIDTH);
+		Camera.y = Camera.clamp(this.getY() - (Game.HEIGHT/2), 0, World.HEIGHT * 16 - Game.HEIGHT);
 	}
 
 	public double getSpeed() {

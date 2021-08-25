@@ -27,7 +27,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	private BufferedImage image;
 	private JFrame frame;
 	
-	public static int WIDTH = 320, HEIGHT = 320, SCALE = 3;
+	public static int WIDTH = 320, HEIGHT = 180, SCALE = 4;
 	public static World world;
 	public static Spritesheet spritesheet;
 	public static  List<Entity> entities;

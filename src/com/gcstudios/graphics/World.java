@@ -19,10 +19,14 @@ public class World {
 	
 	private Tile[] tiles;
 	
+	public static int WIDTH, HEIGHT;
+	
 	public World(String path) {
 		try {
 			BufferedImage map = ImageIO.read(getClass().getResource(path));
 			int[] pixels = new int[map.getWidth()*map.getHeight()];
+			WIDTH = map.getWidth();
+			HEIGHT = map.getHeight();
 			tiles = new Tile[map.getWidth()*map.getHeight()];
 			map.getRGB(0, 0, map.getWidth(), map.getHeight(), pixels, 0, map.getWidth());
 			for(int i = 0; i < map.getWidth() ; i++) {
@@ -77,8 +81,19 @@ public class World {
 	}
 	
 	public void render(Graphics g) {
-		for(Tile tile:tiles) {
-			tile.render(g);
+		int xStart = Camera.x >> 4;
+		int xFinal = xStart + (Game.WIDTH >> 4);
+		int yStart = Camera.y >> 4;
+		int yFinal = yStart + (Game.WIDTH >> 4);
+		
+		for(int i = xStart; i <= xFinal; i++) {
+			for(int j = yStart; j <= yFinal; j++) {
+				if(i < 0 ||i >= WIDTH|| j < 0|| j >= HEIGHT) {
+					continue;
+				}
+				Tile tile = tiles[i + j*WIDTH];
+				tile.render(g);
+			}
 		}
 	}
 
