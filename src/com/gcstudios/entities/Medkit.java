@@ -2,9 +2,7 @@ package com.gcstudios.entities;
 
 import java.awt.image.BufferedImage;
 
-import com.gcstudios.graphics.Entity;
-
-public class Medkit extends Entity{
+public class Medkit extends Item{
 
 	public Medkit(int x, int y, int size, BufferedImage sprite) {
 		super(x, y, size, sprite);

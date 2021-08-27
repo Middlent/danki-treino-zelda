@@ -2,9 +2,7 @@ package com.gcstudios.entities;
 
 import java.awt.image.BufferedImage;
 
-import com.gcstudios.graphics.Entity;
-
-public class Bullet extends Entity{
+public class Bullet extends Item{
 
 	public Bullet(int x, int y, int size, BufferedImage sprite) {
 		super(x, y, size, sprite);

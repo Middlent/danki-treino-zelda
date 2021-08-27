@@ -11,13 +11,14 @@ import com.gcstudio.tiles.WallTile;
 import com.gcstudios.entities.Bullet;
 import com.gcstudios.entities.Enemy;
 import com.gcstudios.entities.Gun;
+import com.gcstudios.entities.Item;
 import com.gcstudios.entities.Medkit;
 import com.gcstudios.entities.Player;
 import com.gcstudios.main.Game;
 
 public class World {
 	
-	private Tile[] tiles;
+	public static Tile[] tiles;
 	
 	public static int WIDTH, HEIGHT;
 	
@@ -58,19 +59,29 @@ public class World {
 							tiles[i + j*map.getWidth()] = new WallTile(i*16, j*16,Tile.DR_TILE_WALL);
 							break; 
 						case 0xFFFF0000: 
-							Game.entities.add(new Enemy(i*16, j*16, 16, Entity.ENTITY_ENEMY));
+							Enemy e = new Enemy(i*16, j*16, 16, Entity.ENTITY_ENEMY);
+							Game.entities.add(e);
+							Game.enemies.add(e);
 							break; 
 						case 0xFF00FF00: 
-							Game.entities.add(new Medkit(i*16, j*16, 16, Entity.ENTITY_MEDKIT));
+							Item medkit = new Medkit(i*16, j*16, 16, Entity.ENTITY_MEDKIT);
+							Game.entities.add(medkit);
+							Game.items.add(medkit);
 							break; 
 						case 0xFF0000FF: 
 							Game.player = new Player(i*16,j*16,16,Entity.ENTITY_PLAYER);
 							break;
 						case 0xFFFFFF00: 
-							Game.entities.add(new Bullet(i*16, j*16, 16, Entity.ENTITY_BULLET));
+							Item bullet = new Bullet(i*16, j*16, 16, Entity.ENTITY_BULLET);
+							Game.entities.add(bullet);
+							Game.entities.add(bullet);
+							Game.items.add(bullet);
 							break; 
 						case 0xFFFF00FF: 
-							Game.entities.add(new Gun(i*16, j*16, 16, Entity.ENTITY_GUN));
+							Item gun = new Gun(i*16, j*16, 16, Entity.ENTITY_GUN);
+							Game.entities.add(gun);
+							Game.entities.add(gun);
+							Game.items.add(gun);
 							break; 
 					}
 				}
@@ -78,6 +89,25 @@ public class World {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static boolean isFree(int x, int y, int w, int h) {
+		int x1 = (x + w - 1) / Game.TILE_SIZE;
+		int y1 = y / Game.TILE_SIZE;
+
+		int x2 = x / Game.TILE_SIZE;
+		int y2 = (y + h - 1) / Game.TILE_SIZE;
+
+		int x3 = x / Game.TILE_SIZE;
+		int y3 = y / Game.TILE_SIZE;
+
+		int x4 = (x + w - 1) / Game.TILE_SIZE;
+		int y4 = (y + h - 1) / Game.TILE_SIZE;
+		
+		return !(tiles[x1 + y1 * World.WIDTH] instanceof WallTile ||
+				tiles[x2 + y2 * World.WIDTH] instanceof WallTile ||
+				tiles[x3 + y3 * World.WIDTH] instanceof WallTile ||
+				tiles[x4 + y4 * World.WIDTH] instanceof WallTile);
 	}
 	
 	public void render(Graphics g) {

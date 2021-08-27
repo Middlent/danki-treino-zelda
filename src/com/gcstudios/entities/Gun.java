@@ -2,9 +2,7 @@ package com.gcstudios.entities;
 
 import java.awt.image.BufferedImage;
 
-import com.gcstudios.graphics.Entity;
-
-public class Gun extends Entity{
+public class Gun extends Item{
 
 	public Gun(int x, int y, int size, BufferedImage sprite) {
 		super(x, y, size, sprite);

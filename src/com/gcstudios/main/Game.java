@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferStrategy;
@@ -13,6 +14,8 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 
+import com.gcstudios.entities.Enemy;
+import com.gcstudios.entities.Item;
 import com.gcstudios.entities.Player;
 import com.gcstudios.graphics.Entity;
 import com.gcstudios.graphics.Spritesheet;
@@ -27,24 +30,31 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	private BufferedImage image;
 	private JFrame frame;
 	
-	public static int WIDTH = 320, HEIGHT = 180, SCALE = 4;
+	public static int WIDTH_RATIO = 16, HEIGHT_RATIO = 9, SCREEN_SIZE = 13, SCALE = 4, TILE_SIZE = 16, WIDTH = SCREEN_SIZE*WIDTH_RATIO, HEIGHT = SCREEN_SIZE*HEIGHT_RATIO, fps = 60;
 	public static World world;
 	public static Spritesheet spritesheet;
 	public static  List<Entity> entities;
+	public static  List<Item> items;
+	public static  List<Enemy> enemies;
 	public static Player player;
+	public static Random random;
 	
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
 		this.addKeyListener(this);
 		initFrame();
-
+		
+		random = new Random();
 		Game.spritesheet = new Spritesheet("/img/spritesheet.png");
 		this.image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		Game.entities = new ArrayList<Entity>();
+		Game.items = new ArrayList<Item>();
+		Game.enemies = new ArrayList<Enemy>();
 		
 		Game.world = new World("/img/maps/1.png");
 		
 		Game.entities.add(player);
+		
 	}
 	
 	private void initFrame() {
@@ -64,10 +74,10 @@ public class Game extends Canvas implements Runnable,KeyListener{
 
 	public void run() {
 		long lastTime = System.nanoTime();
-		double amountOfTicks = 60.0;
-		double ns = 1000000000 / amountOfTicks;
+		double ns = 1000000000 / fps;
 		double delta = 0;
 		double timer = System.currentTimeMillis();
+		requestFocus();
 		while(isRunning) {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
@@ -90,8 +100,8 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		thread.start();
 	}
 	
-	public void stop() {
-		
+	public static void stop() {
+		System.exit(0);
 	}
 	
 	public void tick() {
@@ -114,10 +124,15 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		g.fillRect(0, 0, WIDTH, HEIGHT);
 		
 		Game.world.render(g);
-		for(int i = 0; i < entities.size(); i++) {
-			Entity e = entities.get(i);
+		for(int i = 0; i < items.size(); i++) {
+			Entity e = items.get(i);
 			e.render(g);
 		}
+		for(int i = 0; i < enemies.size(); i++) {
+			Entity e = enemies.get(i);
+			e.render(g);
+		}
+		player.render(g);
 		
 		g.dispose();
 		g = bs.getDrawGraphics();
