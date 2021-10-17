@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Random;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 
@@ -19,16 +21,18 @@ import com.gcstudios.entities.Item;
 import com.gcstudios.entities.Player;
 import com.gcstudios.graphics.Entity;
 import com.gcstudios.graphics.Spritesheet;
+import com.gcstudios.graphics.UI;
 import com.gcstudios.graphics.World;
 
 
-public class Game extends Canvas implements Runnable,KeyListener{
+public class Game extends Canvas implements Runnable,KeyListener,MouseListener{
 	
 	private static final long serialVersionUID = 1L;
 	private Thread thread;
 	private boolean isRunning;
-	private BufferedImage image;
-	private JFrame frame;
+	public static BufferedImage image;
+	public static JFrame frame;
+	private UI ui;
 	
 	public static int WIDTH_RATIO = 16, HEIGHT_RATIO = 9, SCREEN_SIZE = 13, SCALE = 4, TILE_SIZE = 16, WIDTH = SCREEN_SIZE*WIDTH_RATIO, HEIGHT = SCREEN_SIZE*HEIGHT_RATIO, fps = 60;
 	public static World world;
@@ -42,6 +46,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 	public Game() {
 		this.setPreferredSize(new Dimension(WIDTH*SCALE,HEIGHT*SCALE));
 		this.addKeyListener(this);
+		this.addMouseListener(this);
 		initFrame();
 		
 		random = new Random();
@@ -50,6 +55,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		Game.entities = new ArrayList<Entity>();
 		Game.items = new ArrayList<Item>();
 		Game.enemies = new ArrayList<Enemy>();
+		this.ui = new UI();
 		
 		Game.world = new World("/img/maps/1.png");
 		
@@ -122,7 +128,7 @@ public class Game extends Canvas implements Runnable,KeyListener{
 		
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		
+
 		Game.world.render(g);
 		for(int i = 0; i < items.size(); i++) {
 			Entity e = items.get(i);
@@ -133,16 +139,17 @@ public class Game extends Canvas implements Runnable,KeyListener{
 			e.render(g);
 		}
 		player.render(g);
+		ui.render(g);
 		
 		g.dispose();
 		g = bs.getDrawGraphics();
 		g.drawImage(image, 0, 0, WIDTH*SCALE, HEIGHT*SCALE, null);
+		ui.postRender(g);
 		bs.show();
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
 	}
 
 	@Override
@@ -156,6 +163,9 @@ public class Game extends Canvas implements Runnable,KeyListener{
 			player.setLeft(true);
 		}else if(e.getKeyCode() == KeyEvent.VK_RIGHT || e.getKeyCode() == KeyEvent.VK_D){
 			player.setRight(true);
+		}
+		if(e.getKeyCode() == KeyEvent.VK_R) {
+			player.recharge();
 		}
 	}
 
@@ -208,6 +218,33 @@ public class Game extends Canvas implements Runnable,KeyListener{
 
 	public void setFrame(JFrame frame) {
 		this.frame = frame;
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		player.shoot();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

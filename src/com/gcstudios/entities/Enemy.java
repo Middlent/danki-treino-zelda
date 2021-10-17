@@ -11,6 +11,7 @@ import com.gcstudios.main.Game;
 
 public class Enemy extends Entity{
 
+	private boolean colliding;
 	private final int LEFT = 0, RIGHT = 1;
 	private double speed = 1;
 	private int dir;
@@ -38,6 +39,7 @@ public class Enemy extends Entity{
 		leftEnemy = new BufferedImage[4];
 		will = Game.random.nextInt(range);
 		hp = 2; damage = 1;
+		super.setMask(maskx, masky, maskw, maskh);
 		
 		for(int i = 0; i < 4; i++) {
 			rightEnemy[i] = Game.spritesheet.getSprite((3+i)*Game.TILE_SIZE, 2*Game.TILE_SIZE, Game.TILE_SIZE);
@@ -47,24 +49,26 @@ public class Enemy extends Entity{
 	
 	
 	public void tick() {
+		super.tick();
 		
 		boolean moved = false;
+		colliding = this.haveCollisions();
 		
 		if(will > (int) (Game.player.getX() -  x) * Integer.signum((int) (Game.player.getX() -  x)) &&
 				will > (int) (Game.player.getY() -  y) * Integer.signum((int) (Game.player.getY() -  y))) {
-			if((int) (Game.player.getX() -  x) > 0 && World.isFree((int) (x + speed) + maskx, this.getY() + masky, maskw, maskh) && !isColliding((int) (x + speed) + maskx, this.getY() + masky)) {
+			if((int) (Game.player.getX() -  x) > 0 && World.isFree((int) (x + speed) + maskx, this.getY() + masky, maskw, maskh) && !haveCollisions((int) (x + speed) + maskx, this.getY() + masky)) {
 				dir = RIGHT;
 				x += speed;
 				moved = true;
-			}else if((int) (Game.player.getX() -  x) < 0 && World.isFree((int) (x - speed) + maskx, this.getY() + masky, maskw, maskh) && !isColliding((int) (x - speed) + maskx, this.getY() + masky)) {
+			}else if((int) (Game.player.getX() -  x) < 0 && World.isFree((int) (x - speed) + maskx, this.getY() + masky, maskw, maskh) && !haveCollisions((int) (x - speed) + maskx, this.getY() + masky)) {
 				dir = LEFT;
 				x -= speed;
 				moved = true;
 			}
-			if((int) (Game.player.getY() - y) < 0 && World.isFree(this.getX() + maskx, (int) (y - speed) + masky, maskw, maskh) && !isColliding(this.getX() + maskx, (int) (y - speed) + masky)) {
+			if((int) (Game.player.getY() - y) < 0 && World.isFree(this.getX() + maskx, (int) (y - speed) + masky, maskw, maskh) && !haveCollisions(this.getX() + maskx, (int) (y - speed) + masky)) {
 				y -= speed;
 				moved = true;
-			}else if((int) (Game.player.getY() - y) > 0 && World.isFree(this.getX() + maskx, (int) (y + speed) + masky, maskw, maskh) && !isColliding(this.getX() + maskx, (int) (y + speed) + masky)) {
+			}else if((int) (Game.player.getY() - y) > 0 && World.isFree(this.getX() + maskx, (int) (y + speed) + masky, maskw, maskh) && !haveCollisions(this.getX() + maskx, (int) (y + speed) + masky)) {
 				y += speed;
 				moved = true;
 			}
@@ -86,7 +90,7 @@ public class Enemy extends Entity{
 		
 	}
 	
-	private boolean isColliding(int x, int y) {
+	private boolean haveCollisions(int x, int y) {
 		Rectangle colBox = new Rectangle(x,y,maskw,maskh);
 		for(Enemy enemy: Game.enemies) {
 			if(enemy != this) {
@@ -99,6 +103,10 @@ public class Enemy extends Entity{
 			if(!Game.player.isIvulnerable()) Game.player.takeDamage(damage);
 			return true;
 		}
+		return false;
+	}
+	
+	private boolean haveCollisions() {
 		return false;
 	}
 	
